@@ -5,35 +5,32 @@ on:
       - master
 
 jobs:
-  ubuntu-build:
+  build:
     runs-on: ubuntu-latest
-
     strategy:
       matrix:
-        node-version: [12.x] # Adjust the Node.js version as needed
+        node-version: [16.x]
 
     steps:
-      - name: Checking out latest code
-        uses: actions/checkout@v3
-
-
+      - uses: actions/checkout@v3
       - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
 
-      - run: npm install
-      - run: npm start
-
-      - run: pwd
-      - run: ls -la
-
-      - name: Deploy files to server
-        uses: wangyucode/sftp-upload-action@v2.0.2
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: SSH and deploy next js app
+        uses: appleboy/ssh-action@master
         with:
-          username: ${{ secrets.USERNAME }}
           host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
           key: ${{ secrets.KEY }}
-          #localDir: "dist"
-          remoteDir: "/var/www/node-test"
-          # args: "-o ConnectTimeout=5"
+          script: |
+            ls
+            export PATH=$PATH:/home/ubuntu/.nvm/versions/node/v16.16.0/bin/
+            cd /var/www/node-test
+            git pull origin master
+            npm install
+            npm start
