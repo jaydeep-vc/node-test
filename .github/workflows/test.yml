@@ -1,4 +1,4 @@
-name: test-nodejs
+name: node-test
 on:
   push:
     branches:
@@ -35,5 +35,5 @@ jobs:
           host: ${{ secrets.HOST }}
           key: ${{ secrets.KEY }}
           #localDir: "dist"
-          remoteDir: "/var/www/node-test/"
+          remoteDir: "/var/www/node-test"
           # args: "-o ConnectTimeout=5"
